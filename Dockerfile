@@ -12,6 +12,8 @@ RUN spacy download fi_core_news_lg
 
 COPY *.py .
 
+RUN mkdir -p ./conf
+
 COPY conf ./conf
 
 CMD ["flask", "--app",  "main", "run", "--host", "0.0.0.0"]
