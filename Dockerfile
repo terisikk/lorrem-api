@@ -10,7 +10,7 @@ RUN pip install -r requirements.txt
 
 RUN spacy download fi_core_news_lg
 
-COPY *.py .
+COPY *.py ./
 
 RUN mkdir -p ./conf
 
