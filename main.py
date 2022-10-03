@@ -13,6 +13,26 @@ QUERY = cfg.get('quote_api_query')
 ROUTE = cfg.get('lorrem_api_route')
 
 
+# https://towardsdatascience.com/text-generation-with-markov-chains-an-introduction-to-using-markovify-742e6680dc33
+class POSifiedText(markovify.NewlineText):
+    nlp = None
+
+    def __init__(self, nlp, sentences, state_size):
+        self.nlp = nlp
+        super().__init__(sentences, state_size=state_size)
+
+    def word_split(self, sentence):
+        return ['::'.join((word.orth_, word.pos_)) for word in self.nlp(sentence)]
+
+    def word_join(self, words):
+        sentence = ' '.join(word.split('::')[0] for word in words)
+        return sentence
+
+    # Temporary fix for some weird spaces with special characters
+    def make_sentence(self, tries):
+        return super().make_sentence(tries=tries).replace(" ,", ",")
+
+
 def request_all_quotes():
     return requests.get(QUERY, headers=HEADERS).json()
 
@@ -37,7 +57,7 @@ def create_generator(text):
 
     quote_sents = get_nlp_sentences(quote_doc)
 
-    return markovify.NewlineText(quote_sents, state_size=2)
+    return POSifiedText(nlp, quote_sents, 2)
 
 
 def get_nlp_sentences(quote_doc):
