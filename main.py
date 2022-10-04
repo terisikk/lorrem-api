@@ -3,7 +3,7 @@ import requests
 import spacy
 import re
 
-from flask import Flask
+from flask import Flask, request
 from config import cfg
 
 
@@ -11,6 +11,7 @@ QUOTE_API_TOKEN = cfg.get('quote_api_token')
 HEADERS = {'Authorization': QUOTE_API_TOKEN}
 QUERY = cfg.get('quote_api_query')
 ROUTE = cfg.get('lorrem_api_route')
+RATE_LIMIT = cfg.get('lorrem_api_limit')
 
 
 # https://towardsdatascience.com/text-generation-with-markov-chains-an-introduction-to-using-markovify-742e6680dc33
@@ -73,4 +74,17 @@ generator = create_generator(quotes)
 
 @app.route(ROUTE)
 def generate_sentence():
-    return {"lorrem": generator.make_sentence(tries=50)}
+    amount = 1
+
+    try:
+        amount_arg = request.args.get("amount")
+
+        if amount_arg is not None:
+            amount = int(amount_arg)
+    except (ValueError, TypeError):
+        return "Validation error", 400
+
+    if amount > RATE_LIMIT:
+        return "Too many requests", 429
+
+    return {"lorrem": [generator.make_sentence(tries=50) for _ in range(0, amount)]}
