@@ -33,7 +33,7 @@ def split_quote_to_sentences(quote):
 
 
 def create_generator(text):
-    nlp = spacy.load('fi_core_news_lg')
+    nlp = spacy.load('fi_core_news_md')
     quote_doc = nlp(text)
 
     quote_sents = get_nlp_sentences(quote_doc)
