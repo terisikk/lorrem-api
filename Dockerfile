@@ -12,6 +12,8 @@ RUN spacy download fi_core_news_md
 
 COPY *.py ./
 
+COPY lorrem ./lorrem
+
 RUN mkdir -p ./conf
 
 COPY conf ./conf
