@@ -1,6 +1,6 @@
-flake8
 coverage
 requests-mock
 pytest-asyncio
 pytest
 black
+ruff

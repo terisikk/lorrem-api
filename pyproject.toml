@@ -1,8 +1,17 @@
 [tool.black]
 line-length = 120
 
-[tool.flake8]
-max-line-length = 160
+[tool.ruff]
+line-length = 120
+exclude = [
+  ".git",
+  ".venv",
+  ".ruff_cache",
+  ".devcontainer",
+  "__pycache__",
+  ".pytest_cache",
+  ".github"
+]
 
 [tool.coverage.run]
 source = ["lorrem"]
