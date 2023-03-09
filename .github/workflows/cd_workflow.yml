@@ -15,12 +15,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: devcontainers/ci@v0.3
         with:
-          runCmd: pip install -r requirements.txt
+          runCmd: XDG_CACHE_HOME="./.pip_cache" pip install -r requirements.txt
           push: never
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: 'pip'
   unit-test:
     name: "Run unit tests with coverage"
     needs:
@@ -28,10 +24,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: 'pip'
       - uses: devcontainers/ci@v0.3
         with:
           runCmd: coverage run && coverage report
@@ -43,10 +35,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: 'pip'
       - uses: devcontainers/ci@v0.3
         with:
           runCmd: ruff check .
@@ -58,10 +46,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: 'pip'
       - uses: devcontainers/ci@v0.3
         with:
           runCmd: black --check .

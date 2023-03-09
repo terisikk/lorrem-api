@@ -9,3 +9,4 @@ build/
 venv
 .env
 .ruff_cache
+.pip_cache
