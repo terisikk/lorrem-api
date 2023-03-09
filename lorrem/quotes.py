@@ -9,7 +9,7 @@ QUERY = cfg.get("quote_api_query")
 
 
 def request_all_quotes():
-    print(cfg)
+    print("query: ", QUERY)
     return requests.get(QUERY, headers=HEADERS).json()
 
 
