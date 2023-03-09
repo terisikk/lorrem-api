@@ -32,8 +32,10 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
-      - run: coverage run
-      - run: coverage report
+      - uses: devcontainers/ci@v0.3
+        with:
+          runCmd: coverage run && coverage report
+          push: never
   static-analysis:
     name: "Static analysis with ruff"
     needs:
@@ -45,7 +47,10 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
-      - run: ruff check .
+      - uses: devcontainers/ci@v0.3
+        with:
+          runCmd: ruff check .
+          push: never
   formatting:
     name: "Check formatting with black"
     needs:
@@ -57,4 +62,7 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
-      - run: black --check .
+      - uses: devcontainers/ci@v0.3
+        with:
+          runCmd: black --check .
+          push: never
