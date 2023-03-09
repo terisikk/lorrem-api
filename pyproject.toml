@@ -27,6 +27,4 @@ sort = "-Cover"
 show_missing = true
 
 [tool.pytest.ini_options]
-testpaths = [
-  "tests",
-]
+pythonpath = "."
