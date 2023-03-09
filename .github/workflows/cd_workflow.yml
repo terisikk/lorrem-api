@@ -1,0 +1,50 @@
+name: Continuous delivery
+on: # rebuild any PRs and main branch changes
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: "Install and cache requirements"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: devcontainers/ci@v0.3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - run: pip install -r requirements.txt
+  unit-test:
+    name: "Run unit tests with coverage"
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: devcontainers/ci@v0.3
+        with:
+          command: coverage run
+      - uses: devcontainers/ci@v0.3
+        with:
+          command: coverage report
+  static-analysis:
+    name: "Static analysis with ruff"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: devcontainers/ci@v0.3
+        with:
+          command: ruff check .
+  formatting:
+    name: "Check formatting with black"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: devcontainers/ci@v0.3
+        with:
+          command: black --check .
