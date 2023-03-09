@@ -1,0 +1,23 @@
+[tool.black]
+line-length = 120
+
+[tool.flake8]
+max-line-length = 160
+
+[tool.coverage.run]
+source = ["lorrem"]
+branch = true
+command_line = "-m pytest"
+data_file = ".coverage"
+
+[tool.coverage.report]
+fail_under = 80
+skip_empty = true
+skip_covered = true
+sort = "-Cover"
+show_missing = true
+
+[tool.pytest.ini_options]
+testpaths = [
+  "tests",
+]
