@@ -17,3 +17,15 @@ def test_load_all_quotes(requests_mock):
 
     assert adapter.called
     assert actual == expected
+
+
+def test_fake_backend_load(monkeypatch, requests_mock):
+    monkeypatch.setattr(api, "MODE", "dev")
+
+    query = cfg.get("quote_api_query")
+    adapter = requests_mock.get(query, json={})
+
+    actual = api.load_quotes()
+
+    assert not adapter.called
+    assert len(actual) == 2

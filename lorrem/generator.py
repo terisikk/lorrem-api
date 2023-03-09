@@ -1,6 +1,11 @@
 import markovify
 import spacy
 
+from .config import cfg
+
+
+MODE = cfg.get("mode", None)
+
 
 class POSifiedText(markovify.NewlineText):
     nlp = None
@@ -15,6 +20,13 @@ class POSifiedText(markovify.NewlineText):
     def word_join(self, words):
         return "".join([word.split("::")[0] for word in words])
 
+    def test_sentence_output(self, words, max_overlap_ratio, max_overlap_total):
+        # Override sanity check in dev environment, and just return any generated sentence
+        if MODE == "dev":
+            return True
+
+        return super().test_sentence_output(words, max_overlap_ratio, max_overlap_total)
+
 
 def create_generator(sentences):
     # Exclude stuff to not run some extra processing, might speed up a little
@@ -26,4 +38,4 @@ def create_generator(sentences):
 
 
 def construct_newline_sentence(sentences):
-    return " ".join([sentence.text for sentence in sentences if len(sentence.text) > 1]) + "\n"
+    return "".join([sentence.text_with_ws for sentence in sentences]) + "\n"
