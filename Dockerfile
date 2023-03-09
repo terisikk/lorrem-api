@@ -8,8 +8,6 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-RUN spacy download fi_core_news_md
-
 COPY *.py ./
 
 COPY lorrem ./lorrem
