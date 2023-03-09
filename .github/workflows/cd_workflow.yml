@@ -28,28 +28,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: devcontainers/ci@v0.3
+      - uses: actions/setup-python@v4
         with:
-          runCmd: coverage run
-      - uses: devcontainers/ci@v0.3
-        with:
-          runCmd: coverage report
-          push: never
+          python-version: '3.11'
+          cache: 'pip'
+      - run: coverage run
+      - run: coverage report
   static-analysis:
     name: "Static analysis with ruff"
+    needs:
+      - build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: devcontainers/ci@v0.3
+      - uses: actions/setup-python@v4
         with:
-          runCmd: ruff check .
-          push: never
+          python-version: '3.11'
+          cache: 'pip'
+      - run: ruff check .
   formatting:
     name: "Check formatting with black"
+    needs:
+      - build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: devcontainers/ci@v0.3
+      - uses: actions/setup-python@v4
         with:
-          runCmd: black --check .
-          push: never
+          python-version: '3.11'
+          cache: 'pip'
+      - run: black --check .
