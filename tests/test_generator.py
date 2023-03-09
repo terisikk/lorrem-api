@@ -96,4 +96,4 @@ def test_generator_test_sentece_output_in_debug_mode_is_true(monkeypatch):
 
     actual = markovgen.test_sentence_output([], 1, 1)
 
-    assert actual == True
+    assert actual is True

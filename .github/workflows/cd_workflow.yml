@@ -16,6 +16,7 @@ jobs:
       - uses: devcontainers/ci@v0.3
         with:
           runCmd: pip install -r requirements.txt
+          push: never
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
@@ -33,6 +34,7 @@ jobs:
       - uses: devcontainers/ci@v0.3
         with:
           runCmd: coverage report
+          push: never
   static-analysis:
     name: "Static analysis with ruff"
     runs-on: ubuntu-latest
@@ -41,6 +43,7 @@ jobs:
       - uses: devcontainers/ci@v0.3
         with:
           runCmd: ruff check .
+          push: never
   formatting:
     name: "Check formatting with black"
     runs-on: ubuntu-latest
@@ -49,3 +52,4 @@ jobs:
       - uses: devcontainers/ci@v0.3
         with:
           runCmd: black --check .
+          push: never
