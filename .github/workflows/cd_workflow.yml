@@ -13,11 +13,11 @@ jobs:
     name: "Install and cache requirements"
     steps:
       - uses: actions/checkout@v3
+      - run: pipx install poetry==1.4.0
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
           cache: 'poetry'
-      - run: pipx install poetry==1.4.0
       - run: poetry install && poetry build
   unit-test:
     name: "Run unit tests with coverage"
@@ -26,11 +26,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: pipx install poetry==1.4.0 && poetry install
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
           cache: 'poetry'
-      - run: pipx install poetry==1.4.0 && poetry install
       - run: poetry run coverage run
   static-analysis:
     name: "Static analysis with ruff"
@@ -39,11 +39,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: pipx install poetry==1.4.0 && poetry install
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
           cache: 'poetry'
-      - run: pipx install poetry==1.4.0 && poetry install
       - run: poetry run ruff check .
   formatting:
     name: "Check formatting with black"
@@ -52,9 +52,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - run: pipx install poetry==1.4.0 && poetry install
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
           cache: 'poetry'
-      - run: pipx install poetry==1.4.0 && poetry install
       - run: poetry run black --check .
