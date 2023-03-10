@@ -10,25 +10,21 @@ ENV PIP_DEFAULT_TIMEOUT=100 \
     POETRY_VERSION=1.4.0
 
 RUN pip install "poetry==$POETRY_VERSION"
-RUN python -m venv /venv
 
 COPY pyproject.toml poetry.lock ./
-COPY *.py ./
-COPY lorrem ./lorrem
 
 RUN poetry config virtualenvs.in-project true && \
-    poetry install --only=main --no-root && \
-    poetry build
+    poetry install --only=main --no-root
 
-RUN poetry build && /venv/bin/pip install dist/*.whl
+COPY . .
+
+RUN poetry build && ./.venv/bin/pip install dist/*.whl
 
 FROM base as final
 
 COPY --from=builder /app/.venv ./.venv
 COPY --from=builder /app/dist .
-COPY docker-entrypoint.sh .
+COPY docker-entrypoint.sh wsgi.py app.py ./
 COPY conf ./conf
-
-RUN ./.venv/bin/pip install *.whl
 
 CMD ["./docker-entrypoint.sh"]
