@@ -1,5 +1,0 @@
-spacy
-markovify
-flask
-gunicorn
-https://github.com/explosion/spacy-models/releases/download/fi_core_news_md-3.5.0/fi_core_news_md-3.5.0-py3-none-any.whl

@@ -37,6 +37,8 @@ To run checks and tests, you need both. If you are using vscode devontainers, th
 
 ## How to run checks and tests
 
+First drop into poetry shell with `poetry shell` OR prepend these commands with `poetry run`
+
 * `ruff check .` to run static analysis
 * `pytest` to run tests
 * `coverage run` to run tests with coverage

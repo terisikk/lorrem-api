@@ -11,12 +11,14 @@
 		5000
 	],
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "pip3 install --user -r requirements.txt && pip3 install --user -r .devcontainer/requirements-dev.txt",
+	"postCreateCommand": "poetry install",
 	// Configure tool-specific properties.
 	// "customizations": {},
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
-	"containerEnv": {
-		"XDG_CACHE_HOME": "./.pip_cache"
+	"features": {
+		"ghcr.io/devcontainers-contrib/features/poetry:2": {
+			"version": "1.4.0"
+		}
 	}
 }

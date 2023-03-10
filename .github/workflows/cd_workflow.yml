@@ -13,14 +13,13 @@ jobs:
     name: "Install and cache requirements"
     steps:
       - uses: actions/checkout@v3
-      - uses: devcontainers/ci@v0.3
+      - name: Install poetry
+        run: pipx install poetry==1.4.0
+      - uses: actions/setup-python@v4
         with:
-          runCmd: XDG_CACHE_HOME="./.pip_cache" pip install -r requirements.txt
-          push: never
-      - uses: actions/cache@v3
-        with: 
-          path: ./.pip_cache
-          key: ${{ runner.os }}-pip
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry install && poetry build
   unit-test:
     name: "Run unit tests with coverage"
     needs:
@@ -28,14 +27,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache/restore@v3
+      - uses: actions/setup-python@v4
         with:
-          path: ./.pip_cache
-          key: ${{ runner.os }}-pip
-      - uses: devcontainers/ci@v0.3
-        with:
-          runCmd: coverage run && coverage report
-          push: never
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry run coverage run
   static-analysis:
     name: "Static analysis with ruff"
     needs:
@@ -43,14 +39,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache/restore@v3
+      - uses: actions/setup-python@v4
         with:
-          path: ./.pip_cache
-          key: ${{ runner.os }}-pip
-      - uses: devcontainers/ci@v0.3
-        with:
-          runCmd: ruff check .
-          push: never
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry run ruff check .
   formatting:
     name: "Check formatting with black"
     needs:
@@ -58,11 +51,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache/restore@v3
+      - uses: actions/setup-python@v4
         with:
-          path: ./.pip_cache
-          key: ${{ runner.os }}-pip
-      - uses: devcontainers/ci@v0.3
-        with:
-          runCmd: black --check .
-          push: never
+          python-version: '3.11'
+          cache: 'poetry'
+      - run: poetry run black --check .

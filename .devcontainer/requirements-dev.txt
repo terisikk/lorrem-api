@@ -1,6 +1,0 @@
-coverage
-requests-mock
-pytest-asyncio
-pytest
-black
-ruff
