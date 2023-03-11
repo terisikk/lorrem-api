@@ -76,7 +76,7 @@ jobs:
     - name: Publish to Registry
       uses: HurricanKai/Publish-Docker-Github-Action@1.12.1
       with:
-        name: ${{ secrets.DOCKER_REGISTRY }}/lorrem-api:latest
+        name: ${{ secrets.DOCKER_REGISTRY }}/lorrem-api
         registry: ${{ secrets.DOCKER_REGISTRY }}
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
