@@ -1,4 +1,4 @@
-__pycache__/
+**/__pycache__/
 *.pyc
 .vscode/
 .coverage
@@ -10,3 +10,7 @@ venv
 .ruff_cache/
 .pip_cache/
 .git/
+Dockerfile
+.devcontainer/
+.github/
+.gitignore

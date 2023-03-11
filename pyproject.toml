@@ -12,7 +12,7 @@ markovify = "^0.9.4"
 Flask = "^2.2.3"
 gunicorn = "^20.1.0"
 fi-core-news-md = {url = "https://github.com/explosion/spacy-models/releases/download/fi_core_news_md-3.5.0/fi_core_news_md-3.5.0-py3-none-any.whl"}
-importlib-metadata = {version = "^6.0.0", optional = true}
+requests = "^2.28.2"
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.2.1"
@@ -48,7 +48,7 @@ command_line = "-m pytest"
 data_file = ".coverage"
 
 [tool.coverage.report]
-fail_under = 80
+fail_under = 100
 skip_empty = true
 skip_covered = true
 sort = "-Cover"

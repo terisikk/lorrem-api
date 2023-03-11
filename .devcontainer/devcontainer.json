@@ -20,5 +20,12 @@
 		"ghcr.io/devcontainers-contrib/features/poetry:2": {
 			"version": "1.4.0"
 		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"bungcip.better-toml"
+			]
+		}
 	}
 }
