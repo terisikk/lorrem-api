@@ -64,7 +64,7 @@ jobs:
       - run: poetry run black --check .
   publish:
     name: "Publish to registry"
-    if: github.ref == 'refs/heads/master' && github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs:
       - build
       - unit-test
