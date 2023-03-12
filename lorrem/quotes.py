@@ -8,6 +8,8 @@ HEADERS = {"Authorization": QUOTE_API_TOKEN}
 QUERY = cfg.get("quote_api_query")
 MODE = cfg.get("mode")
 
+REQUEST_TIMEOUT = 180
+
 # In Finnish because the default corpus is in Finnish
 # TODO: Generate test data from a file?
 DEV_QUOTES = [
@@ -21,7 +23,7 @@ def request_all_quotes():
     if MODE == "dev":
         return DEV_QUOTES
     else:
-        return requests.get(QUERY, headers=HEADERS).json()
+        return requests.get(QUERY, headers=HEADERS, timeout=REQUEST_TIMEOUT).json()
 
 
 def load_quotes():
