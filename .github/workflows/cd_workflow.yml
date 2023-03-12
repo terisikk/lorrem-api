@@ -83,6 +83,7 @@ jobs:
       - build
       - unit-test
       - static-analysis
+      - security-analysis
       - formatting
     runs-on: ubuntu-latest
     steps:
