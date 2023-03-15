@@ -27,4 +27,4 @@ def request_all_quotes():
 
 
 def load_quotes():
-    return [quote["quote"] for quote in request_all_quotes()]
+    return (quote["quote"] for quote in request_all_quotes())

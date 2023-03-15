@@ -8,14 +8,31 @@ MODE = cfg.get("mode", None)
 
 
 class POSifiedText(markovify.NewlineText):
-    nlp = None
+    def __init__(
+        self,
+        input_text,
+        state_size=2,
+        chain=None,
+        parsed_sentences=None,
+        retain_original=True,
+        well_formed=True,
+        reject_reg="",
+    ):
+        super().__init__(input_text, state_size, chain, parsed_sentences, retain_original, well_formed, reject_reg)
 
-    def __init__(self, nlp, *args, **kwargs):
-        self.nlp = nlp
-        super().__init__(*args, **kwargs)
+    def generate_corpus(self, texts):
+        sentences = []
+
+        nlp = spacy.load("fi_core_news_md", exclude=["ner", "textcat", "lemmatizer", "entity_linker"])
+
+        for doc in nlp.pipe(texts):
+            sentences += doc.sents
+
+        runs = map(self.word_split, sentences)
+        return runs
 
     def word_split(self, sentence):
-        return ["::".join((word.text_with_ws, word.pos_)) for word in self.nlp(sentence)]
+        return ["::".join((word.text_with_ws, word.pos_)) for word in sentence]
 
     def word_join(self, words):
         return "".join([word.split("::")[0] for word in words])
@@ -29,13 +46,4 @@ class POSifiedText(markovify.NewlineText):
 
 
 def create_generator(sentences):
-    # Exclude stuff to not run some extra processing, might speed up a little
-    nlp = spacy.load("fi_core_news_md", exclude=["ner", "textcat", "lemmatizer"])
-
-    sentences = [construct_newline_sentence(document.sents) for document in nlp.pipe(sentences)]
-
-    return POSifiedText(nlp, sentences, state_size=2, well_formed=False)
-
-
-def construct_newline_sentence(sentences):
-    return "".join([sentence.text_with_ws for sentence in sentences]) + "\n"
+    return POSifiedText(sentences, state_size=2, well_formed=False)

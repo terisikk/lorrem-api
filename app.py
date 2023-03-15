@@ -28,3 +28,7 @@ def generate_sentence():
         return "Too many requests", 429
 
     return {"lorrem": [generator.make_sentence(tries=50) for _ in range(0, amount)]}
+
+
+if __name__ == "__main__":
+    [print(generator.make_sentence(trie=50)) for _ in range(0, 10)]

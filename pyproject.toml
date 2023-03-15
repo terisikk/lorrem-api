@@ -23,6 +23,11 @@ black = "^23.1.0"
 ruff = "^0.0.254"
 setuptools = "^67.6.0"
 
+
+[tool.poetry.group.dev-extras.dependencies]
+memray = "^1.7.0"
+gprof2dot = "^2022.7.29"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
@@ -59,3 +64,7 @@ show_missing = true
 pythonpath = "."
 
 [tool.bandit]
+exclude_dirs = [".venv"]
+
+[tool.bandit.assert_used]
+skips = ['*/test_*.py'] # Pytest uses asserts

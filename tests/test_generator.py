@@ -1,6 +1,5 @@
 import spacy
 
-from collections import namedtuple
 from lorrem import generator
 
 
@@ -20,17 +19,15 @@ class MockLanguage(object):
         return [self.__class__.__call__(self, text) for text in texts]
 
 
-SentenceStub = namedtuple("SentenceStub", ["text_with_ws"])
-
-
 def test_sentences_are_constructed_from_nlp():
-    sentences = [
-        SentenceStub("This is a sentence. "),
-        SentenceStub("This, another sentence!"),
-    ]
+    nlp = MockLanguage()
 
-    expected = "This is a sentence. This, another sentence!\n"
-    actual = generator.construct_newline_sentence(sentences)
+    markovgen = generator.POSifiedText(nlp, ["Input Text"])
+
+    original = ["This is a sentence.", "This is another sentence."]
+
+    actual = list(markovgen.generate_corpus(original))
+    expected = [["This ::X", "is ::X", "a ::X", "sentence.::X"], ["This ::X", "is ::X", "another ::X", "sentence.::X"]]
 
     assert actual == expected
 
@@ -38,9 +35,9 @@ def test_sentences_are_constructed_from_nlp():
 def test_POSifiedText_split_adds_tags():
     nlp = MockLanguage()
 
-    markovgen = generator.POSifiedText(nlp, "Input Text")
+    markovgen = generator.POSifiedText(nlp, ["Input Text"])
 
-    original = "This is a sentence."
+    original = list(markovgen.nlp("This is a sentence.").sents)[0]
     expected = ["This ::X", "is ::X", "a ::X", "sentence.::X"]
     actual = markovgen.word_split(original)
 
@@ -81,7 +78,7 @@ def test_generator_is_created(monkeypatch):
 
 def test_generator_test_sentence_output():
     nlp = MockLanguage()
-    markovgen = generator.POSifiedText(nlp, "Input Text")
+    markovgen = generator.POSifiedText(nlp, ["Input Text"])
 
     actual = markovgen.test_sentence_output([], 1, 1)
 
@@ -92,7 +89,7 @@ def test_generator_test_sentece_output_in_debug_mode_is_true(monkeypatch):
     monkeypatch.setattr(generator, "MODE", "dev")
 
     nlp = MockLanguage()
-    markovgen = generator.POSifiedText(nlp, "Input Text")
+    markovgen = generator.POSifiedText(nlp, ["Input Text"])
 
     actual = markovgen.test_sentence_output([], 1, 1)
 

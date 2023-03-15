@@ -24,7 +24,9 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"bungcip.better-toml"
+				"bungcip.better-toml",
+				"tintinweb.graphviz-interactive-preview",
+				"donjayamanne.githistory"
 			]
 		}
 	}
