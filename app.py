@@ -1,6 +1,7 @@
 from flask import Flask, request
 from lorrem import config, generator, quotes
 
+import statistics
 
 ROUTE = config.cfg.get("lorrem_api_route")
 RATE_LIMIT = config.cfg.get("lorrem_api_limit")
@@ -30,5 +31,16 @@ def generate_sentence():
     return {"lorrem": [generator.make_sentence(tries=50) for _ in range(0, amount)]}
 
 
+# This is for testing out the actual live generation and it's error rate
 if __name__ == "__main__":
-    [print(generator.make_sentence(trie=50)) for _ in range(0, 10)]
+    nones = []
+
+    print([generator.make_sentence(tries=50) for _ in range(0, 10)])
+
+    for i in range(0, 100):
+        nones.append(list([generator.make_sentence(tries=50) for _ in range(0, 100)]).count(None))
+
+    print("mean\t", statistics.mean(nones))
+    print("max\t", max(nones))
+    print("min\t", min(nones))
+    print("mode\t", statistics.mode(nones))

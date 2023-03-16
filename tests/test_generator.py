@@ -1,6 +1,7 @@
 import spacy
 
 from lorrem import generator
+from collections import namedtuple
 
 
 class MockLanguage(object):
@@ -17,6 +18,9 @@ class MockLanguage(object):
 
     def pipe(self, texts):
         return [self.__class__.__call__(self, text) for text in texts]
+
+    def replace_pipe(self, *args, **kwargs):
+        pass
 
 
 def test_sentences_are_constructed_from_nlp():
@@ -94,3 +98,26 @@ def test_generator_test_sentece_output_in_debug_mode_is_true(monkeypatch):
     actual = markovgen.test_sentence_output([], 1, 1)
 
     assert actual is True
+
+
+def test_space_sentencizer_factory_works():
+    actual = generator.make_newline_sentencizer(None, "test")
+
+    assert type(actual) == spacy.pipeline.Sentencizer
+    assert "\n" in actual.punct_chars
+    assert len(actual.punct_chars) == 1
+
+
+def test_sentence_input_test_dismisses_empty_sentences():
+    Sentence = namedtuple("Sentence", ["text"])
+
+    original = [Sentence("Test sentence"), Sentence("   "), Sentence(""), Sentence("This is a test   ")]
+    expected = [Sentence("Test sentence"), Sentence("This is a test   ")]
+
+    nlp = MockLanguage()
+    markovgen = generator.POSifiedText(["Input Text"], nlp=nlp)
+
+    actual = list(filter(markovgen.test_sentence_input, original))
+
+    assert actual == expected
+    assert len(expected) == 2

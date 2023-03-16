@@ -1,6 +1,6 @@
 import markovify
 import spacy
-import sys
+
 
 from .config import cfg
 
@@ -27,13 +27,20 @@ class POSifiedText(markovify.NewlineText):
     def generate_corpus(self, texts):
         if not self.nlp:
             self.nlp = spacy.load("fi_core_news_md", exclude=["ner", "textcat", "lemmatizer", "entity_linker"])
+            self.nlp.replace_pipe("parser", "newlinesentencizer")
 
         runs = []
 
         for doc in self.nlp.pipe(texts):
-            runs += map(self.word_split, doc.sents)
+            runs += map(self.word_split, filter(self.test_sentence_input, doc.sents))
 
         return runs
+
+    def test_sentence_input(self, sentence):
+        if len(sentence.text.strip()) == 0:
+            return False
+
+        return True
 
     def word_split(self, sentence):
         return ["::".join((word.text_with_ws, word.pos_)) for word in sentence]
@@ -51,3 +58,12 @@ class POSifiedText(markovify.NewlineText):
 
 def create_generator(texts):
     return POSifiedText(texts, state_size=2, well_formed=False)
+
+
+# Usage as a decorator
+@spacy.Language.factory(
+    "newlinesentencizer",
+    assigns=["token.is_sent_start", "doc.sents"],
+)
+def make_newline_sentencizer(nlp, name):
+    return spacy.pipeline.Sentencizer(punct_chars=["\n"])
