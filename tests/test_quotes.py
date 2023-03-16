@@ -13,7 +13,7 @@ def test_load_all_quotes(requests_mock):
     adapter = requests_mock.get(query, json=quotes)  # nosec B113
 
     expected = [test_quote_1, test_quote_2]
-    actual = api.load_quotes()
+    actual = list(api.load_quotes())
 
     assert adapter.called
     assert actual == expected
@@ -25,7 +25,7 @@ def test_fake_backend_load(monkeypatch, requests_mock):
     query = cfg.get("quote_api_query")
     adapter = requests_mock.get(query, json={})  # nosec B113
 
-    actual = api.load_quotes()
+    actual = list(api.load_quotes())
 
     assert not adapter.called
     assert len(actual) == 2

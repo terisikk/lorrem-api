@@ -27,6 +27,7 @@ setuptools = "^67.6.0"
 [tool.poetry.group.dev-extras.dependencies]
 memray = "^1.7.0"
 gprof2dot = "^2022.7.29"
+memory-profiler = "^0.61.0"
 
 [build-system]
 requires = ["poetry-core"]

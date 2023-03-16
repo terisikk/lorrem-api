@@ -20,9 +20,9 @@ class MockLanguage(object):
 
 
 def test_sentences_are_constructed_from_nlp():
-    nlp = MockLanguage()
+    language = MockLanguage()
 
-    markovgen = generator.POSifiedText(nlp, ["Input Text"])
+    markovgen = generator.POSifiedText(["Input Text"], nlp=language)
 
     original = ["This is a sentence.", "This is another sentence."]
 
@@ -35,7 +35,7 @@ def test_sentences_are_constructed_from_nlp():
 def test_POSifiedText_split_adds_tags():
     nlp = MockLanguage()
 
-    markovgen = generator.POSifiedText(nlp, ["Input Text"])
+    markovgen = generator.POSifiedText(["Input Text"], nlp=nlp)
 
     original = list(markovgen.nlp("This is a sentence.").sents)[0]
     expected = ["This ::X", "is ::X", "a ::X", "sentence.::X"]
@@ -78,7 +78,7 @@ def test_generator_is_created(monkeypatch):
 
 def test_generator_test_sentence_output():
     nlp = MockLanguage()
-    markovgen = generator.POSifiedText(nlp, ["Input Text"])
+    markovgen = generator.POSifiedText(["Input Text"], nlp=nlp)
 
     actual = markovgen.test_sentence_output([], 1, 1)
 
@@ -89,7 +89,7 @@ def test_generator_test_sentece_output_in_debug_mode_is_true(monkeypatch):
     monkeypatch.setattr(generator, "MODE", "dev")
 
     nlp = MockLanguage()
-    markovgen = generator.POSifiedText(nlp, ["Input Text"])
+    markovgen = generator.POSifiedText(["Input Text"], nlp=nlp)
 
     actual = markovgen.test_sentence_output([], 1, 1)
 

@@ -1,13 +1,15 @@
 import markovify
 import spacy
+import sys
 
 from .config import cfg
-
 
 MODE = cfg.get("mode", None)
 
 
 class POSifiedText(markovify.NewlineText):
+    nlp = None
+
     def __init__(
         self,
         input_text,
@@ -17,18 +19,20 @@ class POSifiedText(markovify.NewlineText):
         retain_original=True,
         well_formed=True,
         reject_reg="",
+        nlp=None,
     ):
+        self.nlp = nlp
         super().__init__(input_text, state_size, chain, parsed_sentences, retain_original, well_formed, reject_reg)
 
     def generate_corpus(self, texts):
-        sentences = []
+        if not self.nlp:
+            self.nlp = spacy.load("fi_core_news_md", exclude=["ner", "textcat", "lemmatizer", "entity_linker"])
 
-        nlp = spacy.load("fi_core_news_md", exclude=["ner", "textcat", "lemmatizer", "entity_linker"])
+        runs = []
 
-        for doc in nlp.pipe(texts):
-            sentences += doc.sents
+        for doc in self.nlp.pipe(texts):
+            runs += map(self.word_split, doc.sents)
 
-        runs = map(self.word_split, sentences)
         return runs
 
     def word_split(self, sentence):
@@ -45,5 +49,5 @@ class POSifiedText(markovify.NewlineText):
         return super().test_sentence_output(words, max_overlap_ratio, max_overlap_total)
 
 
-def create_generator(sentences):
-    return POSifiedText(sentences, state_size=2, well_formed=False)
+def create_generator(texts):
+    return POSifiedText(texts, state_size=2, well_formed=False)
