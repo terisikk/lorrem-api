@@ -85,7 +85,6 @@ class POSifiedText(markovify.NewlineText):
 
 
 def create_generator(texts):
-    texts = ["Fake text", "", "Fake text 3", "", "" "Fake text 4"]
     return POSifiedText(texts, state_size=2, well_formed=False)
 
 
