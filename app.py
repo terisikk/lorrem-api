@@ -19,6 +19,7 @@ def generate_sentence():
 
     try:
         amount_arg = request.args.get("amount")
+        start = request.args.get("start")
 
         if amount_arg is not None:
             amount = int(amount_arg)
@@ -28,14 +29,22 @@ def generate_sentence():
     if amount > RATE_LIMIT:
         return "Too many requests", 429
 
-    return {"lorrem": [generator.make_sentence(tries=50) for _ in range(0, amount)]}
+    sentences = []
+
+    for _ in range(0, amount):
+        if start:
+            sentences.append(generator.make_sentence_with_start(start, False, test_output=None))
+        else:
+            sentences.append(generator.make_sentence(tries=50))
+
+    {"lorrem": sentences}
 
 
 # This is for testing out the actual live generation and it's error rate
 if __name__ == "__main__":
     nones = []
 
-    print([generator.make_sentence(tries=50) for _ in range(0, 10)])
+    [print(generator.make_sentence(strict=False, tries=50)) for _ in range(0, 10)]
 
     for i in range(0, 100):
         nones.append(list([generator.make_sentence(tries=50) for _ in range(0, 100)]).count(None))

@@ -1,6 +1,8 @@
 import markovify
 import spacy
+import random
 
+from markovify.chain import BEGIN
 
 from .config import cfg
 
@@ -54,6 +56,25 @@ class POSifiedText(markovify.NewlineText):
             return True
 
         return super().test_sentence_output(words, max_overlap_ratio, max_overlap_total)
+
+    def make_sentence_with_start(self, beginning, strict=True, **kwargs):
+        doc = self.nlp(beginning)
+        beginning = tuple(token.text for token in doc)
+
+        word_count = len(beginning)
+
+        init_states = [
+            key
+            for key in self.chain.model.keys()
+            # check for starting with begin as well ordered lists
+            if tuple(k.split("::")[0].strip() for k in filter(lambda x: x != BEGIN, key))[:word_count] == beginning
+        ]
+
+        random.shuffle(init_states)
+
+        for init_state in init_states:
+            output = self.make_sentence(init_state, **kwargs)
+            return output
 
 
 def create_generator(texts):

@@ -121,3 +121,17 @@ def test_sentence_input_test_dismisses_empty_sentences():
 
     assert actual == expected
     assert len(expected) == 2
+
+
+def test_make_sentence_with_start_works(monkeypatch):
+    monkeypatch.setattr(generator, "MODE", "dev")
+
+    nlp = MockLanguage()
+
+    input = ["Ystävän poika leikkii.", "Naapurin poika nukkuu.", "Metsän poika vonkuu."]
+
+    markovgen = generator.POSifiedText(input, nlp=nlp)
+
+    actual = markovgen.make_sentence_with_start("Naapurin", strict=False)
+
+    assert actual.startswith("Naapurin")
