@@ -1,6 +1,7 @@
 import markovify
 import spacy
 import random
+import functools
 
 from markovify.chain import BEGIN
 
@@ -66,13 +67,7 @@ class POSifiedText(markovify.NewlineText):
         word_count = len(beginning)
 
         if 0 < word_count <= self.state_size:
-            init_states = [
-                key
-                for key in self.chain.model.keys()
-                # check for starting with begin as well ordered lists
-                if tuple(k.split("::")[0].strip() for k in filter(lambda x: x != BEGIN, key))[:word_count] == beginning
-            ]
-
+            init_states = self.get_init_states(word_count, beginning)
             random.shuffle(init_states)
         else:
             return None
@@ -82,6 +77,15 @@ class POSifiedText(markovify.NewlineText):
             return output
 
         return None
+
+    @functools.cache
+    def get_init_states(self, word_count, beginning):
+        return [
+            key
+            for key in self.chain.model.keys()
+            # check for starting with begin as well ordered lists
+            if tuple(k.split("::")[0].strip() for k in filter(lambda x: x != BEGIN, key))[:word_count] == beginning
+        ]
 
 
 def create_generator(texts):
