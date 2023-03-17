@@ -78,7 +78,7 @@ class POSifiedText(markovify.NewlineText):
 
         return None
 
-    @functools.cache
+    @functools.lru_cache(maxsize=128)
     def get_init_states(self, word_count, beginning):
         return [
             key
