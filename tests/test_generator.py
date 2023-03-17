@@ -19,9 +19,9 @@ class MockLanguage(object):
             pos = ["X"] * (len(words))
             sent_starts = [True] + (len(words) - 1) * [False]
             ret = spacy.tokens.Doc(vocab, words, spaces, pos=pos, sent_starts=sent_starts)
-        except:
+        except Exception as e:
             if self.error_handler:
-                self.error_handler("Fake", "Fake", None, "Error")
+                self.error_handler("Fake", "Fake", None, e)
 
         return ret
 
