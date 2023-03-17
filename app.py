@@ -37,7 +37,7 @@ def generate_sentence():
         else:
             sentences.append(generator.make_sentence(tries=50))
 
-    {"lorrem": sentences}
+    return {"lorrem": sentences}
 
 
 # This is for testing out the actual live generation and it's error rate
