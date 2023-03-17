@@ -99,5 +99,4 @@ def make_newline_sentencizer(nlp, name):
 
 
 def nlp_skip_errors(proc_name, proc, docs, e):
-    print(docs)
     print(f"An error occurred when applying component {proc_name}: {e}, continuing processing.")
