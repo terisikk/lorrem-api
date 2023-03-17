@@ -30,11 +30,13 @@ class POSifiedText(markovify.NewlineText):
         if not self.nlp:
             self.nlp = spacy.load("fi_core_news_md", exclude=["ner", "textcat", "lemmatizer", "entity_linker"])
             self.nlp.replace_pipe("parser", "newlinesentencizer")
+            self.nlp.set_error_handler(nlp_skip_errors)
 
         runs = []
 
         for doc in self.nlp.pipe(texts):
-            runs += map(self.word_split, filter(self.test_sentence_input, doc.sents))
+            if doc:
+                runs += map(self.word_split, filter(self.test_sentence_input, doc.sents))
 
         return runs
 
@@ -79,8 +81,11 @@ class POSifiedText(markovify.NewlineText):
             output = self.make_sentence(init_state, **kwargs)
             return output
 
+        return None
+
 
 def create_generator(texts):
+    texts = ["Fake text", "", "Fake text 3", "", "" "Fake text 4"]
     return POSifiedText(texts, state_size=2, well_formed=False)
 
 
@@ -91,3 +96,8 @@ def create_generator(texts):
 )
 def make_newline_sentencizer(nlp, name):
     return spacy.pipeline.Sentencizer(punct_chars=["\n"])
+
+
+def nlp_skip_errors(proc_name, proc, docs, e):
+    print(docs)
+    print(f"An error occurred when applying component {proc_name}: {e}, continuing processing.")

@@ -5,22 +5,34 @@ from collections import namedtuple
 
 
 class MockLanguage(object):
+    error_handler = None
+
     # Mock nlp to allow calling nlp() that normally requires loading a costly library.
     # Some trickery with split to get an approximation of spacy Doc.text_with_ws
     def __call__(self, text):
-        words = text.split(" ")
-        vocab = spacy.vocab.Vocab(string=words)
-        spaces = [True] * (len(words) - 1) + [False]
-        pos = ["X"] * (len(words))
-        sent_starts = [True] + (len(words) - 1) * [False]
+        ret = None
 
-        return spacy.tokens.Doc(vocab, words, spaces, pos=pos, sent_starts=sent_starts)
+        try:
+            words = text.split(" ")
+            vocab = spacy.vocab.Vocab(string=words)
+            spaces = [True] * (len(words) - 1) + [False]
+            pos = ["X"] * (len(words))
+            sent_starts = [True] + (len(words) - 1) * [False]
+            ret = spacy.tokens.Doc(vocab, words, spaces, pos=pos, sent_starts=sent_starts)
+        except:
+            if self.error_handler:
+                self.error_handler("Fake", "Fake", None, "Error")
+
+        return ret
 
     def pipe(self, texts):
         return [self.__class__.__call__(self, text) for text in texts]
 
     def replace_pipe(self, *args, **kwargs):
         pass
+
+    def set_error_handler(self, handler):
+        self.error_handler = handler
 
 
 def test_sentences_are_constructed_from_nlp():
@@ -34,6 +46,13 @@ def test_sentences_are_constructed_from_nlp():
     expected = [["This ::X", "is ::X", "a ::X", "sentence.::X"], ["This ::X", "is ::X", "another ::X", "sentence.::X"]]
 
     assert actual == expected
+
+
+def test_corpus_generation_does_not_fail_with_empty_text():
+    language = MockLanguage()
+    language.set_error_handler(generator.nlp_skip_errors)
+
+    generator.POSifiedText(["Input text", "", "test"], nlp=language)
 
 
 def test_POSifiedText_split_adds_tags():
@@ -149,3 +168,31 @@ def test_make_sentence_with_start_works_when_beginning_eq_state_size(monkeypatch
     actual = markovgen.make_sentence_with_start("Naapurin poika", strict=False, test_output=False)
 
     assert actual and actual.startswith("Naapurin poika")
+
+
+def test_make_sentence_with_start_does_not_error_out_with_too_long_state(monkeypatch):
+    monkeypatch.setattr(generator, "MODE", "dev")
+
+    nlp = MockLanguage()
+
+    input = ["Ystävän poika leikkii.", "Naapurin poika nukkuu.", "Metsän poika vonkuu."]
+
+    markovgen = generator.POSifiedText(input, nlp=nlp, state_size=1)
+
+    actual = markovgen.make_sentence_with_start("Naapurin poika", strict=False, test_output=False)
+
+    assert not actual
+
+
+def test_make_sentence_with_start_does_not_error_out_when_no_key_found(monkeypatch):
+    monkeypatch.setattr(generator, "MODE", "dev")
+
+    nlp = MockLanguage()
+
+    input = ["Fake input"]
+
+    markovgen = generator.POSifiedText(input, nlp=nlp, state_size=1)
+
+    actual = markovgen.make_sentence_with_start("Test", strict=False, test_output=False)
+
+    assert not actual
