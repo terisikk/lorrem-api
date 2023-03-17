@@ -63,14 +63,17 @@ class POSifiedText(markovify.NewlineText):
 
         word_count = len(beginning)
 
-        init_states = [
-            key
-            for key in self.chain.model.keys()
-            # check for starting with begin as well ordered lists
-            if tuple(k.split("::")[0].strip() for k in filter(lambda x: x != BEGIN, key))[:word_count] == beginning
-        ]
+        if 0 < word_count <= self.state_size:
+            init_states = [
+                key
+                for key in self.chain.model.keys()
+                # check for starting with begin as well ordered lists
+                if tuple(k.split("::")[0].strip() for k in filter(lambda x: x != BEGIN, key))[:word_count] == beginning
+            ]
 
-        random.shuffle(init_states)
+            random.shuffle(init_states)
+        else:
+            return None
 
         for init_state in init_states:
             output = self.make_sentence(init_state, **kwargs)

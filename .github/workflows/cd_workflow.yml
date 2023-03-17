@@ -31,7 +31,7 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'poetry'
-      - run: poetry install
+      - run: poetry install --without profiling
       - run: poetry run coverage run
       - run: poetry run coverage report
   static-analysis:
@@ -46,7 +46,7 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'poetry'
-      - run: poetry install
+      - run: poetry install --without profiling
       - run: poetry run ruff check .
   security-analysis:
     name: "Security analysis with bandit"
@@ -60,7 +60,7 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'poetry'
-      - run: poetry install
+      - run: poetry install --without profiling
       - run: poetry run bandit -c pyproject.toml -r lorrem
   formatting:
     name: "Check formatting with black"
@@ -74,7 +74,7 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'poetry'
-      - run: poetry install
+      - run: poetry install --without profiling
       - run: poetry run black --check .
   publish:
     name: "Publish to registry"
