@@ -156,6 +156,20 @@ def test_make_sentence_with_start_works(monkeypatch):
     assert actual.startswith("Naapurin")
 
 
+def test_make_sentence_is_case_insentive(monkeypatch):
+    monkeypatch.setattr(generator, "MODE", "dev")
+
+    nlp = MockLanguage()
+
+    input = ["YSTÄVÄN POIKA LEIKKII.", "NAAPURIN POIKA NUKKUU.", "METSÄN POIKA VONKUU."]
+
+    markovgen = generator.POSifiedText(input, nlp=nlp)
+
+    actual = markovgen.make_sentence_with_start("naapurin", strict=False)
+
+    assert actual.startswith("NAAPURIN")
+
+
 def test_make_sentence_with_start_works_when_beginning_eq_state_size(monkeypatch):
     monkeypatch.setattr(generator, "MODE", "dev")
 

@@ -62,12 +62,10 @@ class POSifiedText(markovify.NewlineText):
 
     def make_sentence_with_start(self, beginning, strict=True, **kwargs):
         doc = self.nlp(beginning)
-        beginning = tuple(token.text for token in doc)
+        beginning = tuple(token.text.lower() for token in doc)
 
-        word_count = len(beginning)
-
-        if 0 < word_count <= self.state_size:
-            init_states = self.get_init_states(word_count, beginning)
+        if 0 < len(beginning) <= self.state_size:
+            init_states = self.get_init_states(beginning)
             random.shuffle(init_states)
         else:
             return None
@@ -79,12 +77,14 @@ class POSifiedText(markovify.NewlineText):
         return None
 
     @functools.lru_cache(maxsize=128)
-    def get_init_states(self, word_count, beginning):
+    def get_init_states(self, beginning):
+        word_count = len(beginning)
         return [
             key
             for key in self.chain.model.keys()
             # check for starting with begin as well ordered lists
-            if tuple(k.split("::")[0].strip() for k in filter(lambda x: x != BEGIN, key))[:word_count] == beginning
+            if tuple(k.split("::")[0].strip().lower() for k in filter(lambda x: x != BEGIN, key))[:word_count]
+            == beginning
         ]
 
 
