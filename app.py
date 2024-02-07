@@ -1,6 +1,8 @@
-from flask import Flask, request
-from lorrem import config, generator, quotes
 import time
+
+from flask import Flask, request
+
+from lorrem import config, generator, quotes
 
 ROUTE = config.cfg.get("lorrem_api_route")
 RATE_LIMIT = config.cfg.get("lorrem_api_limit")
@@ -47,5 +49,7 @@ if __name__ == "__main__":
 
     start = time.time()
     for _ in range(0, 1000):
-        sentences.add(generator.make_sentence_with_start("owo nya", strict=False, tries=50, test_output=None))
+        sentences.add(
+            generator.make_sentence_with_start("owo nya", strict=False, tries=50, test_output=None)
+        )
     print(time.time() - start)

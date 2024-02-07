@@ -1,5 +1,4 @@
 import lorrem.quotes as api
-
 from lorrem.config import cfg
 
 
@@ -10,7 +9,7 @@ def test_load_all_quotes(requests_mock):
 
     query = cfg.get("quote_api_query")
 
-    adapter = requests_mock.get(query, json=quotes)  # nosec B113
+    adapter = requests_mock.get(query, json=quotes)
 
     expected = [test_quote_1, test_quote_2]
     actual = list(api.load_quotes())
@@ -23,7 +22,7 @@ def test_fake_backend_load(monkeypatch, requests_mock):
     monkeypatch.setattr(api, "MODE", "dev")
 
     query = cfg.get("quote_api_query")
-    adapter = requests_mock.get(query, json={})  # nosec B113
+    adapter = requests_mock.get(query, json={})
 
     actual = list(api.load_quotes())
 

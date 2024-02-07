@@ -1,8 +1,8 @@
+import functools
+import random
+
 import markovify
 import spacy
-import random
-import functools
-
 from markovify.chain import BEGIN
 
 from .config import cfg
@@ -25,11 +25,21 @@ class POSifiedText(markovify.NewlineText):
         nlp=None,
     ):
         self.nlp = nlp
-        super().__init__(input_text, state_size, chain, parsed_sentences, retain_original, well_formed, reject_reg)
+        super().__init__(
+            input_text,
+            state_size,
+            chain,
+            parsed_sentences,
+            retain_original,
+            well_formed,
+            reject_reg,
+        )
 
     def generate_corpus(self, texts):
         if not self.nlp:
-            self.nlp = spacy.load("fi_core_news_md", exclude=["ner", "textcat", "lemmatizer", "entity_linker"])
+            self.nlp = spacy.load(
+                "fi_core_news_md", exclude=["ner", "textcat", "lemmatizer", "entity_linker"]
+            )
             self.nlp.replace_pipe("parser", "newlinesentencizer")
             self.nlp.set_error_handler(nlp_skip_errors)
 
@@ -76,14 +86,16 @@ class POSifiedText(markovify.NewlineText):
 
         return None
 
-    @functools.lru_cache(maxsize=128)
+    @functools.lru_cache(maxsize=128)  # noqa
     def get_init_states(self, beginning):
         word_count = len(beginning)
         return [
             key
             for key in self.chain.model.keys()
             # check for starting with begin as well ordered lists
-            if tuple(k.split("::")[0].strip().lower() for k in filter(lambda x: x != BEGIN, key))[:word_count]
+            if tuple(k.split("::")[0].strip().lower() for k in filter(lambda x: x != BEGIN, key))[
+                :word_count
+            ]
             == beginning
         ]
 

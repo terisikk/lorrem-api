@@ -7,13 +7,18 @@ install:
 lint:
 	poetry run bandit -c pyproject.toml -q -r .
 	poetry run ruff check .
-	poetry run black -q --check .
+	poetry run ruff format --check .
 
 .PHONY: format
 format:
-	poetry run black .
+	poetry run ruff format .
 
+# Lcov report included for vscode coverage
 .PHONY: test
 test:
 	poetry run coverage run
 	poetry run coverage report
+
+.PHONY: coverage-lcov
+coverage-lcov:
+	poetry run coverage lcov

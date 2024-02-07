@@ -2,7 +2,6 @@ import requests
 
 from .config import cfg
 
-
 QUOTE_API_TOKEN = cfg.get("quote_api_token")
 HEADERS = {"Authorization": QUOTE_API_TOKEN}
 QUERY = cfg.get("quote_api_query")

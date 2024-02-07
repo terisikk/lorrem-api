@@ -19,8 +19,7 @@ bandit = "^1.7.5"
 coverage = "^7.2.1"
 requests-mock = "^1.10.0"
 pytest = "^7.2.2"
-black = "^23.1.0"
-ruff = "^0.0.254"
+ruff = "^0.2.1"
 setuptools = "^67.6.0"
 
 
@@ -33,25 +32,17 @@ memory-profiler = "^0.61.0"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.black]
-line-length = 120
 
-[tool.ruff]
-line-length = 120
-exclude = [
-  ".git",
-  ".venv",
-  ".ruff_cache",
-  ".devcontainer",
-  "__pycache__",
-  ".pytest_cache",
-  ".github"
-]
+[tool.bandit]
+exclude_dirs = [".venv"]
+
+[tool.bandit.assert_used]
+skips = ['*/test_*.py'] # Pytest uses asserts
 
 [tool.coverage.run]
 source = ["lorrem"]
 branch = true
-command_line = "-m pytest"
+command_line = "-m pytest tests"
 data_file = ".coverage"
 
 [tool.coverage.report]
@@ -60,12 +51,42 @@ skip_empty = true
 skip_covered = true
 sort = "-Cover"
 show_missing = true
+exclude_lines = [
+  # Don't complain if non-runnable code isn't run:
+  "if __name__ == .__main__.:",
+]
+omit = ["animeippo/__main__.py"]
 
 [tool.pytest.ini_options]
-pythonpath = "."
+filterwarnings = [
+  "ignore:pkg_resources is deprecated as an API:DeprecationWarning:.*",
+  "ignore:Deprecated call to `pkg_resources.declare_namespace.*:DeprecationWarning:.*",
+  "ignore:datetime.*:DeprecationWarning:dateutil.*",
+]
 
-[tool.bandit]
-exclude_dirs = [".venv"]
+[tool.ruff]
+line-length = 100
+exclude = [
+  ".git",
+  ".venv",
+  ".ruff_cache",
+  ".devcontainer",
+  "__pycache__",
+  ".pytest_cache",
+  ".github",
+]
 
-[tool.bandit.assert_used]
-skips = ['*/test_*.py'] # Pytest uses asserts
+[tool.ruff.lint]
+select = [
+  "F",
+  "E",
+  "I",
+  "S",
+  "C",
+  "B",
+  "A",
+]
+
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]

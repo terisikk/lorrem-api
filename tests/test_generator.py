@@ -1,7 +1,8 @@
+from collections import namedtuple
+
 import spacy
 
 from lorrem import generator
-from collections import namedtuple
 
 
 class MockLanguage(object):
@@ -43,7 +44,10 @@ def test_sentences_are_constructed_from_nlp():
     original = ["This is a sentence.", "This is another sentence."]
 
     actual = list(markovgen.generate_corpus(original))
-    expected = [["This ::X", "is ::X", "a ::X", "sentence.::X"], ["This ::X", "is ::X", "another ::X", "sentence.::X"]]
+    expected = [
+        ["This ::X", "is ::X", "a ::X", "sentence.::X"],
+        ["This ::X", "is ::X", "another ::X", "sentence.::X"],
+    ]
 
     assert actual == expected
 
@@ -130,7 +134,12 @@ def test_space_sentencizer_factory_works():
 def test_sentence_input_test_dismisses_empty_sentences():
     Sentence = namedtuple("Sentence", ["text"])
 
-    original = [Sentence("Test sentence"), Sentence("   "), Sentence(""), Sentence("This is a test   ")]
+    original = [
+        Sentence("Test sentence"),
+        Sentence("   "),
+        Sentence(""),
+        Sentence("This is a test   "),
+    ]
     expected = [Sentence("Test sentence"), Sentence("This is a test   ")]
 
     nlp = MockLanguage()
@@ -147,9 +156,9 @@ def test_make_sentence_with_start_works(monkeypatch):
 
     nlp = MockLanguage()
 
-    input = ["Ystävän poika leikkii.", "Naapurin poika nukkuu.", "Metsän poika vonkuu."]
+    gen_input = ["Ystävän poika leikkii.", "Naapurin poika nukkuu.", "Metsän poika vonkuu."]
 
-    markovgen = generator.POSifiedText(input, nlp=nlp)
+    markovgen = generator.POSifiedText(gen_input, nlp=nlp)
 
     actual = markovgen.make_sentence_with_start("Naapurin", strict=False)
 
@@ -161,9 +170,9 @@ def test_make_sentence_is_case_insentive(monkeypatch):
 
     nlp = MockLanguage()
 
-    input = ["YSTÄVÄN POIKA LEIKKII.", "NAAPURIN POIKA NUKKUU.", "METSÄN POIKA VONKUU."]
+    gen_input = ["YSTÄVÄN POIKA LEIKKII.", "NAAPURIN POIKA NUKKUU.", "METSÄN POIKA VONKUU."]
 
-    markovgen = generator.POSifiedText(input, nlp=nlp)
+    markovgen = generator.POSifiedText(gen_input, nlp=nlp)
 
     actual = markovgen.make_sentence_with_start("naapurin", strict=False)
 
@@ -175,9 +184,9 @@ def test_make_sentence_with_start_works_when_beginning_eq_state_size(monkeypatch
 
     nlp = MockLanguage()
 
-    input = ["Ystävän poika leikkii.", "Naapurin poika nukkuu.", "Metsän poika vonkuu."]
+    gen_input = ["Ystävän poika leikkii.", "Naapurin poika nukkuu.", "Metsän poika vonkuu."]
 
-    markovgen = generator.POSifiedText(input, nlp=nlp, state_size=2)
+    markovgen = generator.POSifiedText(gen_input, nlp=nlp, state_size=2)
 
     actual = markovgen.make_sentence_with_start("Naapurin poika", strict=False, test_output=False)
 
@@ -189,9 +198,9 @@ def test_make_sentence_with_start_does_not_error_out_with_too_long_state(monkeyp
 
     nlp = MockLanguage()
 
-    input = ["Ystävän poika leikkii.", "Naapurin poika nukkuu.", "Metsän poika vonkuu."]
+    gen_input = ["Ystävän poika leikkii.", "Naapurin poika nukkuu.", "Metsän poika vonkuu."]
 
-    markovgen = generator.POSifiedText(input, nlp=nlp, state_size=1)
+    markovgen = generator.POSifiedText(gen_input, nlp=nlp, state_size=1)
 
     actual = markovgen.make_sentence_with_start("Naapurin poika", strict=False, test_output=False)
 
@@ -203,9 +212,9 @@ def test_make_sentence_with_start_does_not_error_out_when_no_key_found(monkeypat
 
     nlp = MockLanguage()
 
-    input = ["Fake input"]
+    gen_input = ["Fake input"]
 
-    markovgen = generator.POSifiedText(input, nlp=nlp, state_size=1)
+    markovgen = generator.POSifiedText(gen_input, nlp=nlp, state_size=1)
 
     actual = markovgen.make_sentence_with_start("Test", strict=False, test_output=False)
 
