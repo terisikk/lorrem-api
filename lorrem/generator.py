@@ -52,10 +52,7 @@ class POSifiedText(markovify.NewlineText):
         return runs
 
     def test_sentence_input(self, sentence):
-        if len(sentence.text.strip()) == 0:
-            return False
-
-        return True
+        return len(sentence.text.strip()) > 0
 
     def word_split(self, sentence):
         return ["::".join((word.text_with_ws, word.pos_)) for word in sentence]
@@ -70,21 +67,29 @@ class POSifiedText(markovify.NewlineText):
 
         return super().test_sentence_output(words, max_overlap_ratio, max_overlap_total)
 
-    def make_sentence_with_start(self, beginning, strict=True, **kwargs):
+    def make_sentence_with_start(self, beginning, **kwargs):
         doc = self.nlp(beginning)
+
+        if not doc:
+            return None
+
         beginning = tuple(token.text.lower() for token in doc)
 
-        if 0 < len(beginning) <= self.state_size:
-            init_states = self.get_init_states(beginning)
-            random.shuffle(init_states)
-        else:
-            return None
+        starting_words = []
+        starting_words = beginning[self.state_size * -1 :]
+
+        init_states = self.get_init_states(starting_words)
+        random.shuffle(init_states)
 
         for init_state in init_states:
             output = self.make_sentence(init_state, **kwargs)
-            return output
 
-        return None
+            if len(beginning) > self.state_size:
+                return (
+                    " ".join([token.text for token in doc][: -1 * self.state_size]) + " " + output
+                )
+            else:
+                return output
 
     @functools.lru_cache(maxsize=128)  # noqa
     def get_init_states(self, beginning):
@@ -104,7 +109,6 @@ def create_generator(texts):
     return POSifiedText(texts, state_size=2, well_formed=False)
 
 
-# Usage as a decorator
 @spacy.Language.factory(
     "newlinesentencizer",
     assigns=["token.is_sent_start", "doc.sents"],

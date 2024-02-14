@@ -193,7 +193,7 @@ def test_make_sentence_with_start_works_when_beginning_eq_state_size(monkeypatch
     assert actual and actual.startswith("Naapurin poika")
 
 
-def test_make_sentence_with_start_does_not_error_out_with_too_long_state(monkeypatch):
+def test_make_sentence_with_start_prepends_overflow_with_long_state(monkeypatch):
     monkeypatch.setattr(generator, "MODE", "dev")
 
     nlp = MockLanguage()
@@ -202,9 +202,9 @@ def test_make_sentence_with_start_does_not_error_out_with_too_long_state(monkeyp
 
     markovgen = generator.POSifiedText(gen_input, nlp=nlp, state_size=1)
 
-    actual = markovgen.make_sentence_with_start("Naapurin poika", strict=False, test_output=False)
+    actual = markovgen.make_sentence_with_start("Petterin poika", strict=False, test_output=False)
 
-    assert not actual
+    assert actual and actual.startswith("Petterin poika")
 
 
 def test_make_sentence_with_start_does_not_error_out_when_no_key_found(monkeypatch):
@@ -217,5 +217,19 @@ def test_make_sentence_with_start_does_not_error_out_when_no_key_found(monkeypat
     markovgen = generator.POSifiedText(gen_input, nlp=nlp, state_size=1)
 
     actual = markovgen.make_sentence_with_start("Test", strict=False, test_output=False)
+
+    assert not actual
+
+
+def test_make_sentence_with_start_returns_none_with_empty_start(monkeypatch):
+    monkeypatch.setattr(generator, "MODE", "dev")
+
+    nlp = MockLanguage()
+
+    gen_input = ["Fake input"]
+
+    markovgen = generator.POSifiedText(gen_input, nlp=nlp, state_size=1)
+
+    actual = markovgen.make_sentence_with_start("", strict=False, test_output=False)
 
     assert not actual
