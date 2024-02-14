@@ -9,8 +9,8 @@ on: # rebuild any PRs and main branch changes
 
 jobs:
   build:
-    runs-on: ubuntu-latest
     name: "Install and cache requirements"
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: pipx install poetry==1.7.1
@@ -19,6 +19,7 @@ jobs:
           python-version: '3.11'
           cache: 'poetry'
       - run: poetry install && poetry build
+
   unit-test:
     name: "Run unit tests with coverage"
     needs:
@@ -32,8 +33,8 @@ jobs:
           python-version: '3.11'
           cache: 'poetry'
       - run: poetry install --without profiling
-      - run: poetry run coverage run
-      - run: poetry run coverage report
+      - run: make test
+
   static-analysis:
     name: "Static analysis with ruff"
     needs:
@@ -47,35 +48,7 @@ jobs:
           python-version: '3.11'
           cache: 'poetry'
       - run: poetry install --without profiling
-      - run: poetry run ruff check .
-  security-analysis:
-    name: "Security analysis with bandit"
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: pipx install poetry==1.7.1
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: 'poetry'
-      - run: poetry install --without profiling
-      - run: poetry run bandit -c pyproject.toml -r lorrem
-  formatting:
-    name: "Check formatting with ruff"
-    needs:
-      - build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: pipx install poetry==1.7.1
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: 'poetry'
-      - run: poetry install --without profiling
-      - run: poetry run ruff format --check .
+      - run: make lint
 
   build-and-publish:
     runs-on: ubuntu-latest
@@ -85,8 +58,6 @@ jobs:
       - build
       - unit-test
       - static-analysis
-      - security-analysis
-      - formatting
     steps:
       - uses: actions/checkout@v4
       - uses: docker/login-action@v2
