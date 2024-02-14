@@ -34,7 +34,7 @@ def generate_sentence():
 
     for _ in range(0, amount):
         if start:
-            sentences.add(generator.make_sentence_with_start(start, False, test_output=None))
+            sentences.add(generator.make_sentence_with_start(start, strict=False, test_output=None))
         else:
             sentences.add(generator.make_sentence(tries=50))
 
