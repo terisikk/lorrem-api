@@ -206,6 +206,20 @@ def test_make_sentence_with_start_prepends_overflow_with_long_state(monkeypatch)
 
     assert actual and actual.startswith("Petterin poika")
 
+def test_make_sentence_with_start_overflow_does_not_add_extra_spaces(monkeypatch):
+    monkeypatch.setattr(generator, "MODE", "dev")
+
+    nlp = MockLanguage()
+
+    gen_input = ["Ystävän poika leikkii.", "Naapurin poika nukkuu.", "Metsän poika vonkuu."]
+
+    markovgen = generator.POSifiedText(gen_input, nlp=nlp, state_size=1)
+
+    actual = markovgen.make_sentence_with_start("Petteri, poika", strict=False, test_output=False)
+
+    assert actual and actual.startswith("Petteri, poika")
+
+
 
 def test_make_sentence_with_start_does_not_error_out_when_no_key_found(monkeypatch):
     monkeypatch.setattr(generator, "MODE", "dev")

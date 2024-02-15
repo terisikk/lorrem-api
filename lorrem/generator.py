@@ -86,7 +86,7 @@ class POSifiedText(markovify.NewlineText):
 
             if len(beginning) > self.state_size:
                 return (
-                    " ".join([token.text for token in doc][: -1 * self.state_size]) + " " + output
+                    str(doc[: -1 * self.state_size]) + " " + output
                 )
             else:
                 return output

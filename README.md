@@ -13,7 +13,7 @@ If not, first, install `poetry` with `pipx install poetry==1.4.0`, then run `poe
 
 ## Option 1: Using a fake backend
 
-1. `LORREM_CONFIG=conf/dev.conf make serve``
+1. `LORREM_CONFIG=conf/dev.conf make serve`
 2. `curl -X GET http://127.0.0.1:5000/markovpy`
 
 ## Option 2: Using a real backend
