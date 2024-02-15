@@ -85,9 +85,7 @@ class POSifiedText(markovify.NewlineText):
             output = self.make_sentence(init_state, **kwargs)
 
             if len(beginning) > self.state_size:
-                return (
-                    str(doc[: -1 * self.state_size]) + " " + output
-                )
+                return str(doc[: -1 * self.state_size]) + " " + output
             else:
                 return output
 
